@@ -128,16 +128,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="element.cpp" />
-    <ClCompile Include="hash.cpp" />
-    <ClCompile Include="sizeGenerator.cpp" />
     <ClCompile Include="TA laba 8.cpp" />
     <ClCompile Include="table.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="element.h" />
-    <ClInclude Include="hash.h" />
     <ClInclude Include="include.h" />
-    <ClInclude Include="sizeGenerator.h" />
     <ClInclude Include="table.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

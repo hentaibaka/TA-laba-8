@@ -1,28 +1,34 @@
 #include "table.h"
 
-Table::Table(unsigned int (*hash)(string), int (*getNextSize)(int i)) {
-	GetHash = hash;
-	Array = new Element * [Size];
+Table::Table(int size) {
+	Array = new Element*[size];
+	for (int i = 0; i < size; i++) Array[i] = nullptr;
+	Size = size;
+}
+unsigned int Table::GetHash(string s) {
+	int x = 29791; // большие простые числа
+	unsigned int sum = 0;
+	long pow = 1;
+	const size_t n = s.length();
 
+	for (int i = 0; i < n; i++) {
+		sum = (sum + (unsigned char)(s[i]) * pow) % Size;
+		pow = (pow * x) % Size;
+	}
+
+	//cout << "key: " << s << " hash: " << sum << '\n';
+
+	return sum;
 }
 bool Table::Add(string key, t value) {
 	Element* el = new Element(key, value);
+	unsigned int hash = GetHash(el->Key);
 
-	bool res = AddToArray(el, Array, Size);
-
-	//ResizeArray();
-
-	return res;
-}
-bool Table::AddToArray(Element* el, Element** array, int size) {
-	int hash = GetHash(el->Key);
-	int id = GetId(hash, size);
-
-	if (!array[id]) {
-		array[id] = el;
+	if (!Array[hash]) {
+		Array[hash] = el;
 	}
 	else {
-		Element* temp = array[id];
+		Element* temp = Array[hash];
 		while (true) {
 			if (temp->Key == el->Key) { //если такой ключ уже есть
 				return false;
@@ -35,17 +41,16 @@ bool Table::AddToArray(Element* el, Element** array, int size) {
 	return true;
 }
 bool Table::Delete(string key) {
-	int hash = GetHash(key);
-	int Id = GetId(hash, Size);
+	unsigned int hash = GetHash(key);
 
-	Element* temp = Array[Id];
+	Element* temp = Array[hash];
 	Element* tempPrev = nullptr;
 
 	if (temp) {
 		while (temp) {
 			if (temp->Key == key) {
 				if (tempPrev) tempPrev->Next = temp->Next;
-				else Array[Id] = temp->Next;
+				else Array[hash] = temp->Next;
 
 				delete temp;
 				return true;
@@ -57,10 +62,9 @@ bool Table::Delete(string key) {
 	return false;
 }
 Element* Table::Find(string key) {
-	int hash = GetHash(key);
-	int Id = GetId(hash, Size);
+	unsigned int hash = GetHash(key);
 
-	Element* temp = Array[Id];
+	Element* temp = Array[hash];
 	while (temp) {
 		if (temp->Key == key) break;
 		temp = temp->Next;
@@ -78,10 +82,7 @@ bool Table::ChangeValue(string key, t value) {
 	return true;
 
 }
-int Table::GetId(int hash, int size) {
-	return hash % size;
-}
-void Table::Show() {
+void Table::Show(bool empty) {
 	cout << "Array size: " << Size << "\n";
 	for (int i = 0; i < Size; i++) {
 		Element* temp = Array[i];
@@ -91,50 +92,10 @@ void Table::Show() {
 				temp = temp->Next;
 			}
 		}
-		else {
+		else if (empty) {
 			cout << i << ") ---\n";
 		}
 	}
 	cout << "\n";
-}
-int Table::Count() {
-	int count = 0;
-	for (int i = 0; i < Size; i++) {
-		Element* temp = Array[i];
-		while (temp) {
-			count++;
-			temp = temp->Next;
-		}
-	}
-	return count;
-}
-void Table::ResizeArray() {
-	float coef = Count() / Size;
-
-	if (coef >= Coef) {
-
-		int newSize = GetNextSize(SizeIt++);
-		Element** newArray = new Element*[newSize];
-		for (int i = 0; i < newSize; i++) newArray[i] = nullptr;
-		Element* temp;
-		Element* tempPrev;
-
-		for (int i = 0; i < Size; i++) {
-
-			temp = Array[i];
-
-			while (temp) {
-
-				tempPrev = temp;
-				temp = temp->Next;
-				tempPrev->Next = nullptr;
-
-				AddToArray(tempPrev, newArray, newSize);
-
-			}
-		}
-		Array = newArray;
-		Size = newSize;
-	}
 }
 
