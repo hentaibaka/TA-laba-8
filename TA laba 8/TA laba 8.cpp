@@ -1,9 +1,10 @@
-﻿#include "table.h"
+﻿#include "table.cpp"
 
 int main() {
 	setlocale(LC_ALL, "rus");
 
-	Table* table = new Table(1e3+7);
+	//Table<DIRECT_INDEXING>* table = new Table<DIRECT_INDEXING>(18);
+	Table<LINKING>* table = new Table<LINKING>(18); //                              1e3+7
 
 	cout << "\n<=================[Добавление]=================>\n\n";
 
@@ -53,8 +54,9 @@ int main() {
 
 	cout << "\n<=================[Удаление]=================>\n\n";
 
-	bool res2 = table->Delete("Никита");
-	bool res4 = table->Delete("Святослав");
-	bool res3 = table->Delete("Билли Херингтон");
+	bool res2 = table->Delete(keys[1]);
+	bool res3 = table->Delete(keys[4]);
+	bool res4 = table->Delete(keys[5]);
+	bool res5 = table->Delete(keys[8]);
 	table->Show(false);	
 }

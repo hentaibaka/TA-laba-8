@@ -1,5 +1,11 @@
 #include "element.h"
 
+enum Type {
+	LINKING,
+	DIRECT_INDEXING,
+};
+
+template <Type T>
 struct Table {
 	Element** Array;
 	int Size;
